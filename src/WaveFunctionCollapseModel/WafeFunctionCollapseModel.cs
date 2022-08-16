@@ -99,7 +99,11 @@ public abstract class WafeFunctionCollapseModel
                 {
                     for (int t = 0; t < this.T; t++)
                     {
-                        if (this.wave[i][t]) { this.observed[i] = t; break; }
+                        if (this.wave[i][t])
+                        {
+                            this.observed[i] = t;
+                            break;
+                        }
                     }
                 }
 
@@ -110,7 +114,7 @@ public abstract class WafeFunctionCollapseModel
         return true;
     }
 
-    int NextUnobservedNode(Random random)
+    private int NextUnobservedNode(Random random)
     {
         if (this.heuristic == WafeFunctionCollapseHeuristic.Scanline)
         {
@@ -156,7 +160,7 @@ public abstract class WafeFunctionCollapseModel
         return argmin;
     }
 
-    void Observe(int node, Random random)
+    private void Observe(int node, Random random)
     {
         bool[] w = this.wave[node];
         for (int t = 0; t < this.T; t++)
@@ -174,7 +178,7 @@ public abstract class WafeFunctionCollapseModel
         }
     }
 
-    bool Propagate()
+    private bool Propagate()
     {
         while (this.stacksize > 0)
         {
@@ -232,7 +236,7 @@ public abstract class WafeFunctionCollapseModel
         return this.sumsOfOnes[0] > 0;
     }
 
-    void Ban(int i, int t)
+    private void Ban(int i, int t)
     {
         this.wave[i][t] = false;
 
@@ -253,7 +257,7 @@ public abstract class WafeFunctionCollapseModel
         this.entropies[i] = Math.Log(sum) - (this.sumsOfWeightLogWeights[i] / sum);
     }
 
-    void Clear()
+    private void Clear()
     {
         for (int i = 0; i < this.wave.Length; i++)
         {
@@ -262,7 +266,7 @@ public abstract class WafeFunctionCollapseModel
                 this.wave[i][t] = true;
                 for (int d = 0; d < 4; d++)
                 {
-                    this.compatible[i][t][d] = this.propagator[opposite[d]][t].Length;
+                    this.compatible[i][t][d] = this.propagator[Opposite[d]][t].Length;
                 }
             }
 
@@ -297,6 +301,8 @@ public abstract class WafeFunctionCollapseModel
     public abstract void Save(string filename);
 
     protected static int[] dx = { -1, 0, 1, 0 };
+
     protected static int[] dy = { 0, 1, 0, -1 };
-    static int[] opposite = { 2, 3, 0, 1 };
+
+    private static readonly int[] Opposite = { 2, 3, 0, 1 };
 }

@@ -33,23 +33,6 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
             }
         }
 
-        static int[] Tile(Func<int, int, int> f, int size)
-        {
-            int[] result = new int[size * size];
-            for (int y = 0; y < size; y++)
-            {
-                for (int x = 0; x < size; x++)
-                {
-                    result[x + (y * size)] = f(x, y);
-                }
-            }
-
-            return result;
-        }
-
-        static int[] Rotate(int[] array, int size) => Tile((x, y) => array[size - 1 - y + (x * size)], size);
-        static int[] Reflect(int[] array, int size) => Tile((x, y) => array[size - 1 - x + (y * size)], size);
-
         this.tiles = new List<int[]>();
         this.tileNames = new List<string>();
         var weightList = new List<double>();
@@ -339,4 +322,22 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
 
         return result.ToString();
     }
+
+    private static int[] Tile(Func<int, int, int> f, int size)
+    {
+        int[] result = new int[size * size];
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                result[x + (y * size)] = f(x, y);
+            }
+        }
+
+        return result;
+    }
+
+    private static int[] Rotate(int[] array, int size) => Tile((x, y) => array[size - 1 - y + (x * size)], size);
+
+    private static int[] Reflect(int[] array, int size) => Tile((x, y) => array[size - 1 - x + (y * size)], size);
 }

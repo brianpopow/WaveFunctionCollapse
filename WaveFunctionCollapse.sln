@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4811AB4D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveFunctionCollapseExamples", "tests\WaveFunctionCollapseExamples\WaveFunctionCollapseExamples.csproj", "{380E9768-D21C-440A-916A-7CC172899B01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractiveTestUI", "tests\InteractiveTestUI\InteractiveTestUI.csproj", "{FE7ACF72-11A0-4886-8D61-DBA63FC09CFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{380E9768-D21C-440A-916A-7CC172899B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{380E9768-D21C-440A-916A-7CC172899B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{380E9768-D21C-440A-916A-7CC172899B01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE7ACF72-11A0-4886-8D61-DBA63FC09CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE7ACF72-11A0-4886-8D61-DBA63FC09CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE7ACF72-11A0-4886-8D61-DBA63FC09CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE7ACF72-11A0-4886-8D61-DBA63FC09CFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DCC19F29-896F-430E-9FE0-ACF1A3326454} = {A7383310-3AD9-419A-B746-3CBC7CCF34E9}
 		{380E9768-D21C-440A-916A-7CC172899B01} = {4811AB4D-884A-46B9-B193-11CBA2B1B72F}
+		{FE7ACF72-11A0-4886-8D61-DBA63FC09CFC} = {4811AB4D-884A-46B9-B193-11CBA2B1B72F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B348283-C012-472F-96FE-D3DA1ACE0874}

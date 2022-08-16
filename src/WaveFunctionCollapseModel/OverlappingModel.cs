@@ -5,10 +5,10 @@ public class OverlappingModel : WafeFunctionCollapseModel
     private readonly List<int> colors;
     private readonly List<byte[]> patterns;
 
-    public OverlappingModel(string name, int N, int width, int height, bool periodicInput, bool periodic, int symmetry, bool ground, WafeFunctionCollapseHeuristic heuristic)
+    public OverlappingModel(string fileName, int N, int width, int height, bool periodicInput, bool periodic, int symmetry, bool ground, WafeFunctionCollapseHeuristic heuristic)
         : base(width, height, N, periodic, heuristic)
     {
-        var (bitmap, SX, SY) = BitmapHelper.LoadBitmap($"samples{Path.DirectorySeparatorChar}{name}.png");
+        var (bitmap, sx, sy) = BitmapHelper.LoadBitmap(fileName);
         byte[] sample = new byte[bitmap.Length];
         this.colors = new List<int>();
         for (int i = 0; i < sample.Length; i++)
@@ -31,49 +31,20 @@ public class OverlappingModel : WafeFunctionCollapseModel
             sample[i] = (byte)k;
         }
 
-        static byte[] Pattern(Func<int, int, byte> f, int N)
-        {
-            byte[] result = new byte[N * N];
-            for (int y = 0; y < N; y++)
-            {
-                for (int x = 0; x < N; x++)
-                {
-                    result[x + (y * N)] = f(x, y);
-                }
-            }
-
-            return result;
-        }
-
-        static byte[] Rotate(byte[] p, int N) => Pattern((x, y) => p[N - 1 - y + (x * N)], N);
-        static byte[] Reflect(byte[] p, int N) => Pattern((x, y) => p[N - 1 - x + (y * N)], N);
-
-        static long Hash(byte[] p, int C)
-        {
-            long result = 0, power = 1;
-            for (int i = 0; i < p.Length; i++)
-            {
-                result += p[p.Length - 1 - i] * power;
-                power *= C;
-            }
-
-            return result;
-        }
-
         this.patterns = new();
         Dictionary<long, int> patternIndices = new();
         List<double> weightList = new();
 
         int C = this.colors.Count;
-        int xmax = periodicInput ? SX : SX - N + 1;
-        int ymax = periodicInput ? SY : SY - N + 1;
+        int xmax = periodicInput ? sx : sx - N + 1;
+        int ymax = periodicInput ? sy : sy - N + 1;
         for (int y = 0; y < ymax; y++)
         {
             for (int x = 0; x < xmax; x++)
             {
                 byte[][] ps = new byte[8][];
 
-                ps[0] = Pattern((dx, dy) => sample[((x + dx) % SX) + (((y + dy) % SY) * SX)], N);
+                ps[0] = Pattern((dx, dy) => sample[((x + dx) % sx) + (((y + dy) % sy) * sx)], N);
                 ps[1] = Reflect(ps[0], N);
                 ps[2] = Rotate(ps[0], N);
                 ps[3] = Reflect(ps[2], N);
@@ -103,23 +74,6 @@ public class OverlappingModel : WafeFunctionCollapseModel
         this.weights = weightList.ToArray();
         this.T = this.weights.Length;
         this.ground = ground;
-
-        static bool Agrees(byte[] p1, byte[] p2, int dx, int dy, int N)
-        {
-            int xmin = dx < 0 ? 0 : dx, xmax = dx < 0 ? dx + N : N, ymin = dy < 0 ? 0 : dy, ymax = dy < 0 ? dy + N : N;
-            for (int y = ymin; y < ymax; y++)
-            {
-                for (int x = xmin; x < xmax; x++)
-                {
-                    if (p1[x + (N * y)] != p2[x - dx + (N * (y - dy))])
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
 
         this.propagator = new int[4][][];
         for (int d = 0; d < 4; d++)
@@ -207,5 +161,52 @@ public class OverlappingModel : WafeFunctionCollapseModel
         }
 
         BitmapHelper.SaveBitmap(bitmap, this.MX, this.MY, filename);
+    }
+
+    private static byte[] Pattern(Func<int, int, byte> f, int N)
+    {
+        byte[] result = new byte[N * N];
+        for (int y = 0; y < N; y++)
+        {
+            for (int x = 0; x < N; x++)
+            {
+                result[x + (y * N)] = f(x, y);
+            }
+        }
+
+        return result;
+    }
+
+    private static byte[] Rotate(byte[] p, int N) => Pattern((x, y) => p[N - 1 - y + (x * N)], N);
+
+    private static byte[] Reflect(byte[] p, int N) => Pattern((x, y) => p[N - 1 - x + (y * N)], N);
+
+    private static bool Agrees(byte[] p1, byte[] p2, int dx, int dy, int N)
+    {
+        int xmin = dx < 0 ? 0 : dx, xmax = dx < 0 ? dx + N : N, ymin = dy < 0 ? 0 : dy, ymax = dy < 0 ? dy + N : N;
+        for (int y = ymin; y < ymax; y++)
+        {
+            for (int x = xmin; x < xmax; x++)
+            {
+                if (p1[x + (N * y)] != p2[x - dx + (N * (y - dy))])
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static long Hash(byte[] p, int C)
+    {
+        long result = 0, power = 1;
+        for (int i = 0; i < p.Length; i++)
+        {
+            result += p[p.Length - 1 - i] * power;
+            power *= C;
+        }
+
+        return result;
     }
 }

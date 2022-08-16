@@ -5,17 +5,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
 
-static class Program
+public static class Program
 {
-    static void Main()
+    public static void Main()
     {
+        string outputDirectory = "output";
+        string samplesDirectory = "samples";
         Stopwatch sw = Stopwatch.StartNew();
-        var folder = System.IO.Directory.CreateDirectory("output");
-        foreach (var file in folder.GetFiles())
-        {
-            file.Delete();
-        }
-
+        Directory.CreateDirectory(outputDirectory);
+        
         Random random = new();
         XDocument xdoc = XDocument.Load("samples.xml");
 
@@ -40,6 +38,8 @@ static class Program
                 int symmetry = xelem.Get("symmetry", 8);
                 bool ground = xelem.Get("ground", false);
 
+                name = Path.Combine(samplesDirectory, name + ".png");
+                Directory.CreateDirectory(Path.Combine(outputDirectory, samplesDirectory));
                 model = new OverlappingModel(name, N, width, height, periodicInput, periodic, symmetry, ground, heuristic);
             }
             else
@@ -60,10 +60,10 @@ static class Program
                     if (success)
                     {
                         Console.WriteLine("DONE");
-                        model.Save($"output{Path.DirectorySeparatorChar}{name} {seed}.png");
+                        model.Save($"{outputDirectory}{Path.DirectorySeparatorChar}{name} {seed}.png");
                         if (model is SimpleTiledModel stmodel && xelem.Get("textOutput", false))
                         {
-                            System.IO.File.WriteAllText($"output{Path.DirectorySeparatorChar}{name} {seed}.txt", stmodel.TextOutput());
+                            System.IO.File.WriteAllText($"{outputDirectory}{Path.DirectorySeparatorChar}{name} {seed}.txt", stmodel.TextOutput());
                         }
 
                         break;
