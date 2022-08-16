@@ -2,7 +2,7 @@
 
 using System;
 
-abstract class Model
+public abstract class Model
 {
     protected bool[][] wave;
 

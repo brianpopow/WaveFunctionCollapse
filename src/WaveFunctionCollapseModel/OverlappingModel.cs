@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-class OverlappingModel : Model
+public class OverlappingModel : Model
 {
     List<byte[]> patterns;
     List<int> colors;

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-static class Helper
+public static class Helper
 {
     public static int Random(this double[] weights, double r)
     {
