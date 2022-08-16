@@ -16,7 +16,7 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
         : base(width, height, 1, periodic, heuristic)
     {
         this.blackBackground = blackBackground;
-        XElement xroot = XDocument.Load($"tilesets/{name}.xml").Root;
+        XElement xroot = XDocument.Load($"tilesets{Path.DirectorySeparatorChar}{name}.xml").Root;
         bool unique = xroot.Get("unique", false);
 
         List<string> subset = null;
@@ -136,7 +136,7 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
                 for (int t = 0; t < cardinality; t++)
                 {
                     int[] bitmap;
-                    (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap($"tilesets/{name}/{tilename} {t}.png");
+                    (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap($"tilesets{Path.DirectorySeparatorChar}{name}{Path.DirectorySeparatorChar}{tilename} {t}.png");
                     this.tiles.Add(bitmap);
                     this.tileNames.Add($"{tilename} {t}");
                 }
@@ -144,7 +144,7 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
             else
             {
                 int[] bitmap;
-                (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap($"tilesets/{name}/{tilename}.png");
+                (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap($"tilesets{Path.DirectorySeparatorChar}{name}{Path.DirectorySeparatorChar}{tilename}.png");
                 this.tiles.Add(bitmap);
                 this.tileNames.Add($"{tilename} 0");
 

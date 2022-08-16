@@ -8,7 +8,7 @@ public class OverlappingModel : WafeFunctionCollapseModel
     public OverlappingModel(string name, int N, int width, int height, bool periodicInput, bool periodic, int symmetry, bool ground, WafeFunctionCollapseHeuristic heuristic)
         : base(width, height, N, periodic, heuristic)
     {
-        var (bitmap, SX, SY) = BitmapHelper.LoadBitmap($"samples/{name}.png");
+        var (bitmap, SX, SY) = BitmapHelper.LoadBitmap($"samples{Path.DirectorySeparatorChar}{name}.png");
         byte[] sample = new byte[bitmap.Length];
         this.colors = new List<int>();
         for (int i = 0; i < sample.Length; i++)

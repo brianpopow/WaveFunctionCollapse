@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Xml.Linq;
 
 static class Program
@@ -59,10 +60,10 @@ static class Program
                     if (success)
                     {
                         Console.WriteLine("DONE");
-                        model.Save($"output/{name} {seed}.png");
+                        model.Save($"output{Path.DirectorySeparatorChar}{name} {seed}.png");
                         if (model is SimpleTiledModel stmodel && xelem.Get("textOutput", false))
                         {
-                            System.IO.File.WriteAllText($"output/{name} {seed}.txt", stmodel.TextOutput());
+                            System.IO.File.WriteAllText($"output{Path.DirectorySeparatorChar}{name} {seed}.txt", stmodel.TextOutput());
                         }
 
                         break;
