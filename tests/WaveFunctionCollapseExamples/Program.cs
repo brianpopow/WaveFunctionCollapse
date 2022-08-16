@@ -1,8 +1,8 @@
 ﻿// Copyright (C) 2016 Maxim Gumin, The MIT License (MIT)
 
 using System;
-using System.Xml.Linq;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 static class Program
 {
@@ -10,14 +10,17 @@ static class Program
     {
         Stopwatch sw = Stopwatch.StartNew();
         var folder = System.IO.Directory.CreateDirectory("output");
-        foreach (var file in folder.GetFiles()) file.Delete();
+        foreach (var file in folder.GetFiles())
+        {
+            file.Delete();
+        }
 
         Random random = new();
         XDocument xdoc = XDocument.Load("samples.xml");
 
         foreach (XElement xelem in xdoc.Root.Elements("overlapping", "simpletiled"))
         {
-            Model model;
+            WafeFunctionCollapseModel model;
             string name = xelem.Get<string>("name");
             Console.WriteLine($"< {name}");
 
@@ -27,7 +30,7 @@ static class Program
             int height = xelem.Get("height", size);
             bool periodic = xelem.Get("periodic", false);
             string heuristicString = xelem.Get<string>("heuristic");
-            var heuristic = heuristicString == "Scanline" ? Model.Heuristic.Scanline : (heuristicString == "MRV" ? Model.Heuristic.MRV : Model.Heuristic.Entropy);
+            var heuristic = heuristicString == "Scanline" ? WafeFunctionCollapseHeuristic.Scanline : (heuristicString == "MRV" ? WafeFunctionCollapseHeuristic.MRV : WafeFunctionCollapseHeuristic.Entropy);
 
             if (isOverlapping)
             {
@@ -58,14 +61,18 @@ static class Program
                         Console.WriteLine("DONE");
                         model.Save($"output/{name} {seed}.png");
                         if (model is SimpleTiledModel stmodel && xelem.Get("textOutput", false))
+                        {
                             System.IO.File.WriteAllText($"output/{name} {seed}.txt", stmodel.TextOutput());
+                        }
+
                         break;
                     }
-                    else Console.WriteLine("CONTRADICTION");
+
+                    Console.WriteLine("CONTRADICTION");
                 }
             }
         }
 
-        Console.WriteLine($"time = {sw.ElapsedMilliseconds}");
+        Console.WriteLine($"time = {sw.ElapsedMilliseconds} ms");
     }
 }
