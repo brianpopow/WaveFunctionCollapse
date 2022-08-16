@@ -6,6 +6,8 @@ namespace InteractiveTestUI
 
         private static string OutputDirectory = "output";
 
+        private static string FileFilter = "PNG|*.png|JPEG|*.jpeg|JPG|*.jpg|BMP|*.bmp";
+
         public InteractiveTestUI()
         {
             InitializeComponent();
@@ -21,7 +23,7 @@ namespace InteractiveTestUI
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Title = "Select test images";
             fileDialog.Multiselect = true;
-            fileDialog.Filter = "PNG|*.png|JPEG|*.jpeg|JPG|*.jpg";
+            fileDialog.Filter = FileFilter;
             fileDialog.InitialDirectory = @"..\..\..\..\WaveFunctionCollapseExamples\samples";
             DialogResult dialogResult = fileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
@@ -54,6 +56,18 @@ namespace InteractiveTestUI
         {
             this.GenerateButton.Enabled = false;
 
+            StartGeneratePictureTask();
+
+            this.GenerateButton.Enabled = true;
+        }
+
+        private async Task StartGeneratePictureTask()
+        {
+            await Task.Run(() => GeneratePicture());
+        }
+
+        private void GeneratePicture()
+        {
             Random random = new();
 
             string fileName = imageFiles[0];
@@ -71,10 +85,13 @@ namespace InteractiveTestUI
             bool ground = false;
             int screenShots = 2;
             string heuristicString = string.Empty;
-            var heuristic = heuristicString == "Scanline" ? WafeFunctionCollapseHeuristic.Scanline : (heuristicString == "MRV" ? WafeFunctionCollapseHeuristic.MRV : WafeFunctionCollapseHeuristic.Entropy);
+            var heuristic = heuristicString == "Scanline"
+                ? WafeFunctionCollapseHeuristic.Scanline
+                : (heuristicString == "MRV" ? WafeFunctionCollapseHeuristic.MRV : WafeFunctionCollapseHeuristic.Entropy);
 
-            WafeFunctionCollapseModel model = new OverlappingModel(fileName, N, width, height, periodicInput, periodic, symmetry, ground, heuristic);
-            
+            WafeFunctionCollapseModel model = new OverlappingModel(fileName, N, width, height, periodicInput, periodic,
+                symmetry, ground, heuristic);
+
             for (int i = 0; i < screenShots; i++)
             {
                 for (int k = 0; k < 10; k++)
@@ -96,8 +113,6 @@ namespace InteractiveTestUI
                     Console.WriteLine("CONTRADICTION");
                 }
             }
-
-            this.GenerateButton.Enabled = true;
         }
     }
 }
