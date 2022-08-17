@@ -13,7 +13,7 @@ public static class Program
         string samplesDirectory = "samples";
         Stopwatch sw = Stopwatch.StartNew();
         Directory.CreateDirectory(outputDirectory);
-        
+
         Random random = new();
         XDocument xdoc = XDocument.Load("samples.xml");
 

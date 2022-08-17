@@ -2,11 +2,27 @@ namespace InteractiveTestUI
 {
     public partial class InteractiveTestUI : Form
     {
-        private string[] imageFiles;
-
         private static string OutputDirectory = "output";
 
-        private static string FileFilter = "PNG|*.png|JPEG|*.jpeg|JPG|*.jpg|BMP|*.bmp";
+        private static string FileFilter = "PNG|*.png|JPEG|*.jpeg|JPG|*.jpg|BMP|*.bmp|WEBP|*.webp";
+
+        private string[] imageFiles;
+
+        private bool IsOverlapping = true;
+
+        private bool IsSimpletiled = false;
+
+        private bool IsPeriodic = true;
+
+        private bool IsPeriodicInput = true;
+
+        private bool IsGround = false;
+
+        private int Size = 48;
+
+        private int N = 2;
+
+        private WafeFunctionCollapseHeuristic Heuristic = WafeFunctionCollapseHeuristic.Entropy;
 
         public InteractiveTestUI()
         {
@@ -63,34 +79,31 @@ namespace InteractiveTestUI
 
         private async Task StartGeneratePictureTask()
         {
+            this.Status.Text = "Generating...";
             await Task.Run(() => GeneratePicture());
+            this.Status.Text = "Done";
         }
 
         private void GeneratePicture()
         {
+            if (imageFiles == null)
+            {
+                MessageBox.Show("No input images selected");
+                return;
+            }
+
             Random random = new();
 
             string fileName = imageFiles[0];
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             Directory.CreateDirectory(OutputDirectory);
 
-            bool isOverlapping = true;
-            int size = isOverlapping ? 48 : 24;
-            int width = size;
-            int height = size;
-            int N = 3;
-            bool periodicInput = true;
-            bool periodic = false;
+            int width = this.Size;
+            int height = this.Size;
             int symmetry = 8;
-            bool ground = false;
             int screenShots = 2;
-            string heuristicString = string.Empty;
-            var heuristic = heuristicString == "Scanline"
-                ? WafeFunctionCollapseHeuristic.Scanline
-                : (heuristicString == "MRV" ? WafeFunctionCollapseHeuristic.MRV : WafeFunctionCollapseHeuristic.Entropy);
-
-            WafeFunctionCollapseModel model = new OverlappingModel(fileName, N, width, height, periodicInput, periodic,
-                symmetry, ground, heuristic);
+            WafeFunctionCollapseModel model = new OverlappingModel(fileName, this.N, width, height, this.IsPeriodicInput, this.IsPeriodic,
+                symmetry, this.IsGround, this.Heuristic);
 
             for (int i = 0; i < screenShots; i++)
             {
@@ -112,6 +125,74 @@ namespace InteractiveTestUI
 
                     Console.WriteLine("CONTRADICTION");
                 }
+            }
+        }
+
+        private void Overlapping_CheckedChanged(object sender, EventArgs e)
+        {
+            this.IsOverlapping = Overlapping.Checked;
+            this.IsSimpletiled = !this.IsOverlapping;
+        }
+
+        private void Simpletiled_CheckedChanged(object sender, EventArgs e)
+        {
+            this.IsSimpletiled = Simpletiled.Checked;
+            this.IsOverlapping = !this.IsSimpletiled;
+        }
+
+        private void Periodic_CheckedChanged(object sender, EventArgs e)
+        {
+            this.IsPeriodic = Periodic.Checked;
+        }
+
+        private void Ground_CheckedChanged(object sender, EventArgs e)
+        {
+            this.IsGround = Ground.Checked;
+        }
+
+        private void PeriodicInput_CheckedChanged(object sender, EventArgs e)
+        {
+            this.IsPeriodicInput = Periodic.Checked;
+        }
+
+        private void SizeTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            this.Size = SizeTrackBar.Value;
+            this.SizeLabel.Text = $"Size: {this.Size}";
+        }
+
+        private void HeuristicComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (HeuristicComboBox.Text)
+            {
+                case "MRV":
+                    this.Heuristic = WafeFunctionCollapseHeuristic.MRV;
+                    break;
+                case "Scanline":
+                    this.Heuristic = WafeFunctionCollapseHeuristic.Scanline;
+                    break;
+                case "Entropy":
+                    this.Heuristic = WafeFunctionCollapseHeuristic.Entropy;
+                    break;
+                default:
+                    this.Heuristic = WafeFunctionCollapseHeuristic.Entropy;
+                    break;
+            }
+        }
+
+        private void NComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (NComboBox.Text)
+            {
+                case "2":
+                    this.N = 2;
+                    break;
+                case "3":
+                    this.N = 3;
+                    break;
+                default:
+                    this.N = 3;
+                    break;
             }
         }
     }

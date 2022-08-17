@@ -9,17 +9,24 @@ public abstract class WafeFunctionCollapseModel
     protected int[] observed;
 
     (int, int)[] stack;
-    int stacksize, observedSoFar;
+    int stacksize;
+    int observedSoFar;
 
     protected int MX, MY, T, N;
-    protected bool periodic, ground;
+    protected bool periodic;
+    protected bool ground;
 
     protected double[] weights;
-    double[] weightLogWeights, distribution;
+    double[] weightLogWeights;
+    double[] distribution;
 
     protected int[] sumsOfOnes;
-    double sumOfWeights, sumOfWeightLogWeights, startingEntropy;
-    protected double[] sumsOfWeights, sumsOfWeightLogWeights, entropies;
+    double sumOfWeights;
+    double sumOfWeightLogWeights;
+    double startingEntropy;
+    protected double[] sumsOfWeights;
+    protected double[] sumsOfWeightLogWeights;
+    protected double[] entropies;
 
     WafeFunctionCollapseHeuristic heuristic;
 
@@ -32,7 +39,7 @@ public abstract class WafeFunctionCollapseModel
         this.heuristic = heuristic;
     }
 
-    void Init()
+    private void Init()
     {
         this.wave = new bool[this.MX * this.MY][];
         this.compatible = new int[this.wave.Length][][];
