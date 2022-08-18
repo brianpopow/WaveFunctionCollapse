@@ -60,6 +60,8 @@
             // 
             // InputImagesPanel
             // 
+            this.InputImagesPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.InputImagesPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.InputImagesPanel.Location = new System.Drawing.Point(12, 78);
             this.InputImagesPanel.Name = "InputImagesPanel";
@@ -101,6 +103,9 @@
             // 
             // OutputPanel
             // 
+            this.OutputPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OutputPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.OutputPanel.Controls.Add(this.OutputPicture);
             this.OutputPanel.Location = new System.Drawing.Point(418, 78);
@@ -110,6 +115,9 @@
             // 
             // OutputPicture
             // 
+            this.OutputPicture.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OutputPicture.Location = new System.Drawing.Point(13, 16);
             this.OutputPicture.Name = "OutputPicture";
             this.OutputPicture.Size = new System.Drawing.Size(847, 545);
@@ -118,6 +126,7 @@
             // 
             // GenerateButton
             // 
+            this.GenerateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.GenerateButton.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.GenerateButton.ForeColor = System.Drawing.SystemColors.MenuText;
             this.GenerateButton.Location = new System.Drawing.Point(1158, 661);
@@ -130,6 +139,7 @@
             // 
             // Status
             // 
+            this.Status.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Status.AutoSize = true;
             this.Status.BackColor = System.Drawing.Color.White;
             this.Status.ForeColor = System.Drawing.SystemColors.InfoText;
@@ -152,6 +162,8 @@
             // 
             // OutputLabel
             // 
+            this.OutputLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OutputLabel.AutoSize = true;
             this.OutputLabel.BackColor = System.Drawing.Color.White;
             this.OutputLabel.ForeColor = System.Drawing.SystemColors.MenuText;
@@ -163,6 +175,7 @@
             // 
             // Options
             // 
+            this.Options.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Options.Controls.Add(this.SubsetsLabel);
             this.Options.Controls.Add(this.SubsetsComboBox);
             this.Options.Controls.Add(this.NComboBox);
@@ -260,7 +273,7 @@
             // 
             this.SizeTrackBar.Location = new System.Drawing.Point(16, 133);
             this.SizeTrackBar.Maximum = 500;
-            this.SizeTrackBar.Minimum = 20;
+            this.SizeTrackBar.Minimum = 10;
             this.SizeTrackBar.Name = "SizeTrackBar";
             this.SizeTrackBar.Size = new System.Drawing.Size(290, 45);
             this.SizeTrackBar.TabIndex = 5;
