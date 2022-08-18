@@ -1,6 +1,6 @@
 ﻿namespace WaveFunctionCollapseModel.Data
 {
-    internal class ImageData
+    public class ImageData
     {
         public ImageData(string filePath)
         {

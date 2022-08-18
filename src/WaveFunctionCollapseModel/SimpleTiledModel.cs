@@ -1,5 +1,6 @@
 ﻿// Copyright (C) 2016 Maxim Gumin, The MIT License (MIT)
 
+using System.Linq;
 using WaveFunctionCollapseModel.Data;
 
 public class SimpleTiledModel : WafeFunctionCollapseModel
@@ -12,12 +13,11 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
 
     private readonly int tileSize;
 
-    public SimpleTiledModel(string fileNameConfig, string subsetName, int width, int height, bool periodic, bool blackBackground, WafeFunctionCollapseHeuristic heuristic)
+    public SimpleTiledModel(TiledDataConfig config, string subsetName, int width, int height, bool periodic, bool blackBackground, WafeFunctionCollapseHeuristic heuristic)
         : base(width, height, 1, periodic, heuristic)
     {
         this.blackBackground = blackBackground;
 
-        TiledDataConfig config = new TiledDataConfig(fileNameConfig, subsetName);
         bool unique = config.Unique;
 
         this.tiles = new List<int[]>();
@@ -26,10 +26,10 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
         foreach (var tile in config.Tiles)
         {
             string tileName = tile.Name;
-            if (config.SubsetNames != null && !config.SubsetNames.Contains(tileName))
+            /*if (config.SubSets != null && !config.SubSets.ContainsKey(tileName))
             {
                 continue;
-            }
+            }*/
 
             this.T = action.Count;
 
@@ -71,11 +71,11 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
             string[] left = neighbor.Left;
             string[] right = neighbor.Right;
 
-            if (config.SubsetNames != null &&
-                (!config.SubsetNames.Contains(left[0]) || !config.SubsetNames.Contains(right[0])))
+            /*if (config.SubSets != null &&
+                (!config.SubSets.Keys.Contains(left[0]) || !config.SubSets.Keys.Contains(right[0])))
             {
                 continue;
-            }
+            }*/
 
             int L = action[firstOccurrence[left[0]]][left.Length == 1 ? 0 : int.Parse(left[1])], D = action[L][1];
             int R = action[firstOccurrence[right[0]]][right.Length == 1 ? 0 : int.Parse(right[1])], U = action[R][1];

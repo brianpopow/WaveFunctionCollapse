@@ -1,6 +1,6 @@
 ﻿namespace WaveFunctionCollapseModel.Data
 {
-    internal enum SymmetryType
+    public enum SymmetryType
     {
         X = 0,
 

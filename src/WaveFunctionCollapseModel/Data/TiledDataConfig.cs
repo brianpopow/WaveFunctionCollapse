@@ -3,15 +3,15 @@ using WaveFunctionCollapseModel.Extensions;
 
 namespace WaveFunctionCollapseModel.Data
 {
-    internal class TiledDataConfig
+    public class TiledDataConfig
     {
-        public TiledDataConfig(string xmlConfigPath, string subsetName)
+        public TiledDataConfig(string xmlConfigPath)
         {
             this.FirstOccurrence = new Dictionary<string, int>();
             this.Action = new List<int[]>();
             this.Weights = new List<double>();
             this.Tiles = new List<TileData>();
-            this.SubsetNames = null;
+            this.SubSets = null;
 
             var configPath = Path.GetDirectoryName(xmlConfigPath);
             var tileImagesPath = Path.Combine(configPath, Path.GetFileNameWithoutExtension(xmlConfigPath));
@@ -19,16 +19,15 @@ namespace WaveFunctionCollapseModel.Data
             XElement xRoot = XDocument.Load(xmlConfigPath).Root;
             this.Unique = xRoot.Get("unique", false);
 
-            if (!string.IsNullOrEmpty(subsetName))
+            if (xRoot.Element("subsets") != null)
             {
-                XElement xsubset = xRoot.Element("subsets").Elements("subset").FirstOrDefault(x => x.Get<string>("name") == subsetName);
-                if (xsubset == null)
+                var subSets = xRoot.Element("subsets").Elements("subset");
+                this.SubSets = new Dictionary<string, List<string>>();
+                foreach (var subSet in subSets)
                 {
-                    Console.WriteLine($"ERROR: subset {subsetName} is not found");
-                }
-                else
-                {
-                    this.SubsetNames = xsubset.Elements("tile").Select(x => x.Get<string>("name")).ToList();
+                    var subSetName = subSet.FirstAttribute.Value;
+                    var subsetNames = subSet.Elements("tile").Select(x => x.Get<string>("name")).ToList();
+                    this.SubSets.Add(subSetName, subsetNames);
                 }
             }
 
@@ -116,20 +115,22 @@ namespace WaveFunctionCollapseModel.Data
                     tileData.Images.Add(new ImageData(Path.Combine(tileImagesPath, $"{tileName}.png")));
                     tileNames.Add($"{tileName} 0");
 
-                    for (int t = 1; t < tileData.Cardinality; t++)
+                    /*for (int t = 1; t < tileData.Cardinality; t++)
                     {
                         if (t <= 3)
                         {
-                            tileData.Images.Add(new ImageData(tileData.Images[actionCount + t - 1], ImageTransform.Rotate));
+                            var rotated = new ImageData(tileData.Images[actionCount + t - 1], ImageTransform.Rotate);
+                            tileData.Images.Add(rotated);
                         }
 
                         if (t >= 4)
                         {
-                            tileData.Images.Add(new ImageData(tileData.Images[actionCount + t - 4], ImageTransform.Reflect));
+                            var reflected = new ImageData(tileData.Images[actionCount + t - 4], ImageTransform.Reflect);
+                            tileData.Images.Add(reflected);
                         }
 
                         tileNames.Add($"{tileName} {t}");
-                    }
+                    }*/
                 }
 
                 for (int t = 0; t < tileData.Cardinality; t++)
@@ -158,9 +159,9 @@ namespace WaveFunctionCollapseModel.Data
 
         public List<NeighborData> Neighbors { get; }
 
-        public List<string> SubsetNames { get; }
-
         public int[][] Map { get; }
+
+        public Dictionary<string, List<string>> SubSets { get; }
 
         public List<int[]> Action { get; }
 

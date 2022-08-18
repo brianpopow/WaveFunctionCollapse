@@ -1,6 +1,6 @@
 ﻿namespace WaveFunctionCollapseModel.Data
 {
-    internal class NeighborData
+    public class NeighborData
     {
         public NeighborData(string[] left, string[] right)
         {

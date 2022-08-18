@@ -40,6 +40,8 @@
             this.InputLabel = new System.Windows.Forms.Label();
             this.OutputLabel = new System.Windows.Forms.Label();
             this.Options = new System.Windows.Forms.GroupBox();
+            this.SubsetsLabel = new System.Windows.Forms.Label();
+            this.SubsetsComboBox = new System.Windows.Forms.ComboBox();
             this.NComboBox = new System.Windows.Forms.ComboBox();
             this.NLabel = new System.Windows.Forms.Label();
             this.HeuristicLabel = new System.Windows.Forms.Label();
@@ -161,6 +163,8 @@
             // 
             // Options
             // 
+            this.Options.Controls.Add(this.SubsetsLabel);
+            this.Options.Controls.Add(this.SubsetsComboBox);
             this.Options.Controls.Add(this.NComboBox);
             this.Options.Controls.Add(this.NLabel);
             this.Options.Controls.Add(this.HeuristicLabel);
@@ -177,13 +181,33 @@
             this.Options.TabStop = false;
             this.Options.Text = "Options";
             // 
+            // SubsetsLabel
+            // 
+            this.SubsetsLabel.AutoSize = true;
+            this.SubsetsLabel.ForeColor = System.Drawing.SystemColors.MenuText;
+            this.SubsetsLabel.Location = new System.Drawing.Point(160, 101);
+            this.SubsetsLabel.Name = "SubsetsLabel";
+            this.SubsetsLabel.Size = new System.Drawing.Size(45, 15);
+            this.SubsetsLabel.TabIndex = 12;
+            this.SubsetsLabel.Text = "Subset:";
+            // 
+            // SubsetsComboBox
+            // 
+            this.SubsetsComboBox.Enabled = false;
+            this.SubsetsComboBox.FormattingEnabled = true;
+            this.SubsetsComboBox.Location = new System.Drawing.Point(211, 98);
+            this.SubsetsComboBox.Name = "SubsetsComboBox";
+            this.SubsetsComboBox.Size = new System.Drawing.Size(121, 23);
+            this.SubsetsComboBox.TabIndex = 11;
+            this.SubsetsComboBox.SelectedIndexChanged += new System.EventHandler(this.SubsetsCoboBox_SelectedIndexChanged);
+            // 
             // NComboBox
             // 
             this.NComboBox.FormattingEnabled = true;
             this.NComboBox.Items.AddRange(new object[] {
             "2",
             "3"});
-            this.NComboBox.Location = new System.Drawing.Point(85, 212);
+            this.NComboBox.Location = new System.Drawing.Point(212, 64);
             this.NComboBox.Name = "NComboBox";
             this.NComboBox.Size = new System.Drawing.Size(121, 23);
             this.NComboBox.TabIndex = 10;
@@ -193,7 +217,7 @@
             // 
             this.NLabel.AutoSize = true;
             this.NLabel.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.NLabel.Location = new System.Drawing.Point(54, 220);
+            this.NLabel.Location = new System.Drawing.Point(187, 67);
             this.NLabel.Name = "NLabel";
             this.NLabel.Size = new System.Drawing.Size(19, 15);
             this.NLabel.TabIndex = 9;
@@ -203,7 +227,7 @@
             // 
             this.HeuristicLabel.AutoSize = true;
             this.HeuristicLabel.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.HeuristicLabel.Location = new System.Drawing.Point(16, 177);
+            this.HeuristicLabel.Location = new System.Drawing.Point(149, 35);
             this.HeuristicLabel.Name = "HeuristicLabel";
             this.HeuristicLabel.Size = new System.Drawing.Size(57, 15);
             this.HeuristicLabel.TabIndex = 8;
@@ -216,7 +240,7 @@
             "Scanline",
             "Entropy",
             "MRV"});
-            this.HeuristicComboBox.Location = new System.Drawing.Point(85, 174);
+            this.HeuristicComboBox.Location = new System.Drawing.Point(212, 33);
             this.HeuristicComboBox.Name = "HeuristicComboBox";
             this.HeuristicComboBox.Size = new System.Drawing.Size(121, 23);
             this.HeuristicComboBox.TabIndex = 7;
@@ -226,7 +250,7 @@
             // 
             this.SizeLabel.AutoSize = true;
             this.SizeLabel.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.SizeLabel.Location = new System.Drawing.Point(312, 133);
+            this.SizeLabel.Location = new System.Drawing.Point(312, 143);
             this.SizeLabel.Name = "SizeLabel";
             this.SizeLabel.Size = new System.Drawing.Size(45, 15);
             this.SizeLabel.TabIndex = 6;
@@ -234,7 +258,7 @@
             // 
             // SizeTrackBar
             // 
-            this.SizeTrackBar.Location = new System.Drawing.Point(16, 123);
+            this.SizeTrackBar.Location = new System.Drawing.Point(16, 133);
             this.SizeTrackBar.Maximum = 500;
             this.SizeTrackBar.Minimum = 20;
             this.SizeTrackBar.Name = "SizeTrackBar";
@@ -337,5 +361,7 @@
         private ComboBox NComboBox;
         private Label NLabel;
         private ToolStripMenuItem OpenTiledSettingFile;
+        private Label SubsetsLabel;
+        private ComboBox SubsetsComboBox;
     }
 }

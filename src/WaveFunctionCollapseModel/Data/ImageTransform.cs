@@ -1,6 +1,6 @@
 ﻿namespace WaveFunctionCollapseModel.Data
 {
-    internal enum ImageTransform
+    public enum ImageTransform
     {
         None = 0,
 

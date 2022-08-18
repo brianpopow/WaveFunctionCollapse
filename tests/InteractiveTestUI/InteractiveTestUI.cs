@@ -1,3 +1,5 @@
+using WaveFunctionCollapseModel.Data;
+
 namespace InteractiveTestUI
 {
     public partial class InteractiveTestUI : Form
@@ -10,17 +12,21 @@ namespace InteractiveTestUI
 
         private string[] imageFiles;
 
+        private TiledDataConfig tileImagesConfig;
+
+        private string subSet = string.Empty;
+
         private string tileImagesConfigFile;
 
-        private bool IsOverlapping = true;
+        private bool isOverlapping = true;
 
-        private bool IsPeriodic = true;
+        private bool isPeriodic = true;
 
-        private bool IsPeriodicInput = true;
+        private bool isPeriodicInput = true;
 
-        private bool IsGround = false;
+        private bool isGround = false;
 
-        private int Size = 48;
+        private int size = 48;
 
         private int N = 2;
 
@@ -46,7 +52,7 @@ namespace InteractiveTestUI
             DialogResult dialogResult = fileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                this.IsOverlapping = true;
+                this.isOverlapping = true;
                 this.InputImagesPanel.Controls.Clear();
 
                 this.imageFiles = fileDialog.FileNames;
@@ -71,9 +77,20 @@ namespace InteractiveTestUI
             DialogResult dialogResult = fileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                this.IsOverlapping = false;
+                this.isOverlapping = false;
                 this.InputImagesPanel.Controls.Clear();
                 this.tileImagesConfigFile = fileDialog.FileNames[0];
+                this.tileImagesConfig = new TiledDataConfig(this.tileImagesConfigFile);
+
+                if (this.tileImagesConfig.SubSets != null)
+                {
+                    this.SubsetsComboBox.Enabled = true;
+                    this.SubsetsComboBox.Items.Clear();
+                    foreach (var subSetsKey in this.tileImagesConfig.SubSets.Keys)
+                    {
+                        this.SubsetsComboBox.Items.Add(subSetsKey);
+                    }
+                }
             }
         }
 
@@ -106,9 +123,9 @@ namespace InteractiveTestUI
                 string fileNameWithoutExtension = string.Empty;
                 WafeFunctionCollapseModel model;
                 int screenShots = 2;
-                int width = this.Size;
-                int height = this.Size;
-                if (this.IsOverlapping)
+                int width = this.size;
+                int height = this.size;
+                if (this.isOverlapping)
                 {
                     if (imageFiles == null)
                     {
@@ -120,7 +137,7 @@ namespace InteractiveTestUI
                     fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
                     Directory.CreateDirectory(OutputDirectory);
                     int symmetry = 8;
-                    model = new OverlappingModel(fileName, this.N, width, height, this.IsPeriodicInput, this.IsPeriodic, symmetry, this.IsGround, this.Heuristic);
+                    model = new OverlappingModel(fileName, this.N, width, height, this.isPeriodicInput, this.isPeriodic, symmetry, this.isGround, this.Heuristic);
                 }
                 else
                 {
@@ -132,7 +149,7 @@ namespace InteractiveTestUI
 
                     bool blackBackground = false;
                     fileNameWithoutExtension = Path.GetFileNameWithoutExtension(this.tileImagesConfigFile);
-                    model = new SimpleTiledModel(this.tileImagesConfigFile, string.Empty, width, height, this.IsPeriodic, blackBackground, this.Heuristic);
+                    model = new SimpleTiledModel(this.tileImagesConfig, this.subSet, width, height, this.isPeriodic, blackBackground, this.Heuristic);
                 }
 
                 for (int i = 0; i < screenShots; i++)
@@ -168,23 +185,23 @@ namespace InteractiveTestUI
 
         private void Periodic_CheckedChanged(object sender, EventArgs e)
         {
-            this.IsPeriodic = Periodic.Checked;
+            this.isPeriodic = Periodic.Checked;
         }
 
         private void Ground_CheckedChanged(object sender, EventArgs e)
         {
-            this.IsGround = Ground.Checked;
+            this.isGround = Ground.Checked;
         }
 
         private void PeriodicInput_CheckedChanged(object sender, EventArgs e)
         {
-            this.IsPeriodicInput = Periodic.Checked;
+            this.isPeriodicInput = Periodic.Checked;
         }
 
         private void SizeTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            this.Size = SizeTrackBar.Value;
-            this.SizeLabel.Text = $"Size: {this.Size}";
+            this.size = SizeTrackBar.Value;
+            this.SizeLabel.Text = $"Size: {this.size}";
         }
 
         private void HeuristicComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -220,6 +237,11 @@ namespace InteractiveTestUI
                     this.N = 3;
                     break;
             }
+        }
+
+        private void SubsetsCoboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.subSet = this.SubsetsComboBox.SelectedItem.ToString();
         }
     }
 }

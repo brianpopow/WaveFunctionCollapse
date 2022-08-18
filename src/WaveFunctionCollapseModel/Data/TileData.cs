@@ -1,6 +1,6 @@
 ﻿namespace WaveFunctionCollapseModel.Data
 {
-    internal class TileData
+    public class TileData
     {
         public TileData(string name)
         {

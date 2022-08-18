@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
+using WaveFunctionCollapseModel.Data;
 
 public static class Program
 {
@@ -20,8 +21,8 @@ public static class Program
         foreach (XElement xelem in xdoc.Root.Elements("overlapping", "simpletiled"))
         {
             WafeFunctionCollapseModel model;
-            string name = xelem.Get<string>("name");
-            Console.WriteLine($"< {name}");
+            string fileName = xelem.Get<string>("name");
+            Console.WriteLine($"< {fileName}");
 
             bool isOverlapping = xelem.Name == "overlapping";
             int size = xelem.Get("size", isOverlapping ? 48 : 24);
@@ -38,15 +39,16 @@ public static class Program
                 int symmetry = xelem.Get("symmetry", 8);
                 bool ground = xelem.Get("ground", false);
 
-                name = Path.Combine(samplesDirectory, name + ".png");
+                fileName = Path.Combine(samplesDirectory, fileName + ".png");
                 Directory.CreateDirectory(Path.Combine(outputDirectory, samplesDirectory));
-                model = new OverlappingModel(name, N, width, height, periodicInput, periodic, symmetry, ground, heuristic);
+                model = new OverlappingModel(fileName, N, width, height, periodicInput, periodic, symmetry, ground, heuristic);
             }
             else
             {
                 string subset = xelem.Get<string>("subset");
                 bool blackBackground = xelem.Get("blackBackground", false);
-                model = new SimpleTiledModel(name, subset, width, height, periodic, blackBackground, heuristic);
+                var tileImagesConfig = new TiledDataConfig(fileName);
+                model = new SimpleTiledModel(tileImagesConfig, subset, width, height, periodic, blackBackground, heuristic);
             }
 
             for (int i = 0; i < xelem.Get("screenshots", 2); i++)
@@ -59,10 +61,10 @@ public static class Program
                     if (success)
                     {
                         Console.WriteLine("DONE");
-                        model.Save($"{outputDirectory}{Path.DirectorySeparatorChar}{name} {seed}.png");
+                        model.Save($"{outputDirectory}{Path.DirectorySeparatorChar}{fileName} {seed}.png");
                         if (model is SimpleTiledModel stmodel && xelem.Get("textOutput", false))
                         {
-                            File.WriteAllText($"{outputDirectory}{Path.DirectorySeparatorChar}{name} {seed}.txt", stmodel.TextOutput());
+                            File.WriteAllText($"{outputDirectory}{Path.DirectorySeparatorChar}{fileName} {seed}.txt", stmodel.TextOutput());
                         }
 
                         break;
