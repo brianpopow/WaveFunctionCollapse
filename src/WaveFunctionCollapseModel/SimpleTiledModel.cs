@@ -38,14 +38,14 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
                 for (int t = 0; t < tile.Cardinality; t++)
                 {
                     int[] bitmap;
-                    (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap(tile.Images[t]);
+                    (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap(tile.Images[t].FilePath);
                     this.tiles.Add(bitmap);
                 }
             }
             else
             {
                 int[] bitmap;
-                (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap(tile.Images[0]);
+                (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap(tile.Images[0].FilePath);
                 this.tiles.Add(bitmap);
             }
         }

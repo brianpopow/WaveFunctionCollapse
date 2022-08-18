@@ -1,5 +1,3 @@
-using System.Xml.Linq;
-
 namespace InteractiveTestUI
 {
     public partial class InteractiveTestUI : Form
@@ -15,8 +13,6 @@ namespace InteractiveTestUI
         private string tileImagesConfigFile;
 
         private bool IsOverlapping = true;
-
-        private bool IsSimpletiled = false;
 
         private bool IsPeriodic = true;
 
@@ -105,10 +101,9 @@ namespace InteractiveTestUI
         {
             try
             {
-                // TODO: fixed seed
-                Random random = new(1337);
+                Random random = new();
 
-                string fileNameWithoutExtension = String.Empty;
+                string fileNameWithoutExtension = string.Empty;
                 WafeFunctionCollapseModel model;
                 int screenShots = 2;
                 int width = this.Size;

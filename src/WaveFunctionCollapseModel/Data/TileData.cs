@@ -9,10 +9,10 @@
 
         public string Name { get; }
 
-        public List<string> Images { get; set; }
+        public List<ImageData> Images { get; set; }
 
         public int Cardinality { get; set; }
 
-        public char Symmetry { get; set; }
+        public SymmetryType Symmetry { get; set; }
     }
 }
