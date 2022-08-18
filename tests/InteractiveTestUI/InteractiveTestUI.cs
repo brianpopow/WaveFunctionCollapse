@@ -165,7 +165,17 @@ namespace InteractiveTestUI
                             var outputFileName = $"{OutputDirectory}{Path.DirectorySeparatorChar}{fileNameWithoutExtension}-{seed}.png";
                             model.Save(outputFileName);
 
-                            this.OutputPicture.Image = Image.FromFile(outputFileName);
+                            var generatedImage = Image.FromFile(outputFileName);
+                            if (generatedImage.Width > this.OutputPicture.Width ||
+                                generatedImage.Height > this.OutputPicture.Height)
+                            {
+                                var resizedImage = (Image)(new Bitmap(generatedImage, new Size(this.OutputPicture.Width, this.OutputPicture.Height)));
+                                this.OutputPicture.Image = resizedImage;
+                            }
+                            else
+                            {
+                                this.OutputPicture.Image = generatedImage;
+                            }
 
                             break;
                         }
