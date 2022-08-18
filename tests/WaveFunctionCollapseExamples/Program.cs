@@ -46,7 +46,6 @@ public static class Program
             {
                 string subset = xelem.Get<string>("subset");
                 bool blackBackground = xelem.Get("blackBackground", false);
-
                 model = new SimpleTiledModel(name, subset, width, height, periodic, blackBackground, heuristic);
             }
 
@@ -63,7 +62,7 @@ public static class Program
                         model.Save($"{outputDirectory}{Path.DirectorySeparatorChar}{name} {seed}.png");
                         if (model is SimpleTiledModel stmodel && xelem.Get("textOutput", false))
                         {
-                            System.IO.File.WriteAllText($"{outputDirectory}{Path.DirectorySeparatorChar}{name} {seed}.txt", stmodel.TextOutput());
+                            File.WriteAllText($"{outputDirectory}{Path.DirectorySeparatorChar}{name} {seed}.txt", stmodel.TextOutput());
                         }
 
                         break;

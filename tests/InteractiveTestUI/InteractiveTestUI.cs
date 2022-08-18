@@ -1,12 +1,18 @@
+using System.Xml.Linq;
+
 namespace InteractiveTestUI
 {
     public partial class InteractiveTestUI : Form
     {
         private static string OutputDirectory = "output";
 
-        private static string FileFilter = "PNG|*.png|JPEG|*.jpeg|JPG|*.jpg|BMP|*.bmp|WEBP|*.webp";
+        private static string FileFilterOverlappingFiles = "PNG|*.png|JPEG|*.jpeg|JPG|*.jpg|BMP|*.bmp|WEBP|*.webp";
+
+        private static string FileFilterTiledFiles = "XML|*.xml";
 
         private string[] imageFiles;
+
+        private string tileImagesConfigFile;
 
         private bool IsOverlapping = true;
 
@@ -34,37 +40,44 @@ namespace InteractiveTestUI
 
         }
 
-        private void OpenImagesMenuItem_Click(object sender, EventArgs e)
+        private void OpenOverlappingImage_Click(object sender, EventArgs e)
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Title = "Select test images";
-            fileDialog.Multiselect = true;
-            fileDialog.Filter = FileFilter;
+            fileDialog.Title = "Select overlapping image";
+            fileDialog.Multiselect = false;
+            fileDialog.Filter = FileFilterOverlappingFiles;
             fileDialog.InitialDirectory = @"..\..\..\..\WaveFunctionCollapseExamples\samples";
             DialogResult dialogResult = fileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
+                this.IsOverlapping = true;
                 this.InputImagesPanel.Controls.Clear();
 
                 this.imageFiles = fileDialog.FileNames;
                 int x = 20;
                 int y = 20;
-                int maxHeight = -1;
-                foreach (var file in this.imageFiles)
-                {
-                    PictureBox box = new PictureBox();
-                    box.Image = Image.FromFile(file);
-                    box.Location = new Point(x, y);
-                    x += box.Width + 10;
-                    maxHeight = Math.Max(maxHeight, box.Height);
-                    if (x > this.ClientSize.Width - 50)
-                    {
-                        x = 20;
-                        y += maxHeight + 10;
-                    }
+                var file = this.imageFiles[0];
+                PictureBox box = new PictureBox();
+                box.Image = Image.FromFile(file);
+                box.Location = new Point(x, y);
 
-                    this.InputImagesPanel.Controls.Add(box);
-                }
+                this.InputImagesPanel.Controls.Add(box);
+            }
+        }
+
+        private void OpenTiledSettingFile_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Title = "Select tiled configuration file";
+            fileDialog.Multiselect = false;
+            fileDialog.Filter = FileFilterTiledFiles;
+            fileDialog.InitialDirectory = @"..\..\..\..\WaveFunctionCollapseExamples\tilesets";
+            DialogResult dialogResult = fileDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                this.IsOverlapping = false;
+                this.InputImagesPanel.Controls.Clear();
+                this.tileImagesConfigFile = fileDialog.FileNames[0];
             }
         }
 
@@ -80,64 +93,82 @@ namespace InteractiveTestUI
         private async Task StartGeneratePictureTask()
         {
             this.Status.Text = "Generating...";
-            await Task.Run(() => GeneratePicture());
-            this.Status.Text = "Done";
+            bool hasError = await Task.Run(() => GeneratePicture());
+            this.Status.Text = hasError ? "Error" : "Done";
         }
 
-        private void GeneratePicture()
+        /// <summary>
+        /// Generates the picture from the given input data.
+        /// </summary>
+        /// <returns>true, if there was an error.</returns>
+        private bool GeneratePicture()
         {
-            if (imageFiles == null)
+            try
             {
-                MessageBox.Show("No input images selected");
-                return;
-            }
+                // TODO: fixed seed
+                Random random = new(1337);
 
-            Random random = new();
-
-            string fileName = imageFiles[0];
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-            Directory.CreateDirectory(OutputDirectory);
-
-            int width = this.Size;
-            int height = this.Size;
-            int symmetry = 8;
-            int screenShots = 2;
-            WafeFunctionCollapseModel model = new OverlappingModel(fileName, this.N, width, height, this.IsPeriodicInput, this.IsPeriodic,
-                symmetry, this.IsGround, this.Heuristic);
-
-            for (int i = 0; i < screenShots; i++)
-            {
-                for (int k = 0; k < 10; k++)
+                string fileNameWithoutExtension = String.Empty;
+                WafeFunctionCollapseModel model;
+                int screenShots = 2;
+                int width = this.Size;
+                int height = this.Size;
+                if (this.IsOverlapping)
                 {
-                    Console.Write("> ");
-                    int seed = random.Next();
-                    bool success = model.Run(seed, -1);
-                    if (success)
+                    if (imageFiles == null)
                     {
-                        Console.WriteLine("DONE");
-                        var outputFileName = $"{OutputDirectory}{Path.DirectorySeparatorChar}{fileNameWithoutExtension}-{seed}.png";
-                        model.Save(outputFileName);
-
-                        this.OutputPicture.Image = Image.FromFile(outputFileName);
-
-                        break;
+                        MessageBox.Show("No input images selected");
+                        return false;
                     }
 
-                    Console.WriteLine("CONTRADICTION");
+                    string fileName = imageFiles[0];
+                    fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+                    Directory.CreateDirectory(OutputDirectory);
+                    int symmetry = 8;
+                    model = new OverlappingModel(fileName, this.N, width, height, this.IsPeriodicInput, this.IsPeriodic, symmetry, this.IsGround, this.Heuristic);
                 }
+                else
+                {
+                    if (this.tileImagesConfigFile == null)
+                    {
+                        MessageBox.Show("No tile input image configuration selected");
+                        return false;
+                    }
+
+                    bool blackBackground = false;
+                    fileNameWithoutExtension = Path.GetFileNameWithoutExtension(this.tileImagesConfigFile);
+                    model = new SimpleTiledModel(this.tileImagesConfigFile, string.Empty, width, height, this.IsPeriodic, blackBackground, this.Heuristic);
+                }
+
+                for (int i = 0; i < screenShots; i++)
+                {
+                    for (int k = 0; k < 20; k++)
+                    {
+                        Console.Write("> ");
+                        int seed = random.Next();
+                        bool success = model.Run(seed, -1);
+                        if (success)
+                        {
+                            Console.WriteLine("DONE");
+                            var outputFileName = $"{OutputDirectory}{Path.DirectorySeparatorChar}{fileNameWithoutExtension}-{seed}.png";
+                            model.Save(outputFileName);
+
+                            this.OutputPicture.Image = Image.FromFile(outputFileName);
+
+                            break;
+                        }
+
+                        Console.WriteLine("CONTRADICTION");
+                    }
+                }
+
+                return false;
             }
-        }
-
-        private void Overlapping_CheckedChanged(object sender, EventArgs e)
-        {
-            this.IsOverlapping = Overlapping.Checked;
-            this.IsSimpletiled = !this.IsOverlapping;
-        }
-
-        private void Simpletiled_CheckedChanged(object sender, EventArgs e)
-        {
-            this.IsSimpletiled = Simpletiled.Checked;
-            this.IsOverlapping = !this.IsSimpletiled;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return true;
+            }
         }
 
         private void Periodic_CheckedChanged(object sender, EventArgs e)

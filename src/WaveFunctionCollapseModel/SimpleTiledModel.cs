@@ -1,6 +1,6 @@
 ﻿// Copyright (C) 2016 Maxim Gumin, The MIT License (MIT)
 
-using System.Xml.Linq;
+using WaveFunctionCollapseModel.Data;
 
 public class SimpleTiledModel : WafeFunctionCollapseModel
 {
@@ -12,149 +12,46 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
 
     private readonly int tileSize;
 
-    public SimpleTiledModel(string name, string subsetName, int width, int height, bool periodic, bool blackBackground, WafeFunctionCollapseHeuristic heuristic)
+    public SimpleTiledModel(string fileNameConfig, string subsetName, int width, int height, bool periodic, bool blackBackground, WafeFunctionCollapseHeuristic heuristic)
         : base(width, height, 1, periodic, heuristic)
     {
         this.blackBackground = blackBackground;
-        XElement xroot = XDocument.Load($"tilesets{Path.DirectorySeparatorChar}{name}.xml").Root;
-        bool unique = xroot.Get("unique", false);
 
-        List<string> subset = null;
-        if (subsetName != null)
-        {
-            XElement xsubset = xroot.Element("subsets").Elements("subset").FirstOrDefault(x => x.Get<string>("name") == subsetName);
-            if (xsubset == null)
-            {
-                Console.WriteLine($"ERROR: subset {subsetName} is not found");
-            }
-            else
-            {
-                subset = xsubset.Elements("tile").Select(x => x.Get<string>("name")).ToList();
-            }
-        }
+        TiledDataConfig config = new TiledDataConfig(fileNameConfig, subsetName);
+        bool unique = config.Unique;
 
         this.tiles = new List<int[]>();
-        this.tileNames = new List<string>();
-        var weightList = new List<double>();
-
-        var action = new List<int[]>();
-        var firstOccurrence = new Dictionary<string, int>();
-
-        foreach (XElement xtile in xroot.Element("tiles").Elements("tile"))
+        var action = config.Action;
+        var firstOccurrence = config.FirstOccurrence;
+        foreach (var tile in config.Tiles)
         {
-            string tilename = xtile.Get<string>("name");
-            if (subset != null && !subset.Contains(tilename))
+            string tileName = tile.Name;
+            if (config.SubsetNames != null && !config.SubsetNames.Contains(tileName))
             {
                 continue;
             }
 
-            Func<int, int> a, b;
-            int cardinality;
-
-            char sym = xtile.Get("symmetry", 'X');
-            if (sym == 'L')
-            {
-                cardinality = 4;
-                a = i => (i + 1) % 4;
-                b = i => i % 2 == 0 ? i + 1 : i - 1;
-            }
-            else if (sym == 'T')
-            {
-                cardinality = 4;
-                a = i => (i + 1) % 4;
-                b = i => i % 2 == 0 ? i : 4 - i;
-            }
-            else if (sym == 'I')
-            {
-                cardinality = 2;
-                a = i => 1 - i;
-                b = i => i;
-            }
-            else if (sym == '\\')
-            {
-                cardinality = 2;
-                a = i => 1 - i;
-                b = i => 1 - i;
-            }
-            else if (sym == 'F')
-            {
-                cardinality = 8;
-                a = i => i < 4 ? (i + 1) % 4 : 4 + ((i - 1) % 4);
-                b = i => i < 4 ? i + 4 : i - 4;
-            }
-            else
-            {
-                cardinality = 1;
-                a = i => i;
-                b = i => i;
-            }
-
             this.T = action.Count;
-            firstOccurrence.Add(tilename, this.T);
-
-            int[][] map = new int[cardinality][];
-            for (int t = 0; t < cardinality; t++)
-            {
-                map[t] = new int[8];
-
-                map[t][0] = t;
-                map[t][1] = a(t);
-                map[t][2] = a(a(t));
-                map[t][3] = a(a(a(t)));
-                map[t][4] = b(t);
-                map[t][5] = b(a(t));
-                map[t][6] = b(a(a(t)));
-                map[t][7] = b(a(a(a(t))));
-
-                for (int s = 0; s < 8; s++)
-                {
-                    map[t][s] += this.T;
-                }
-
-                action.Add(map[t]);
-            }
 
             if (unique)
             {
-                for (int t = 0; t < cardinality; t++)
+                for (int t = 0; t < tile.Cardinality; t++)
                 {
                     int[] bitmap;
-                    (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap($"tilesets{Path.DirectorySeparatorChar}{name}{Path.DirectorySeparatorChar}{tilename} {t}.png");
+                    (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap(tile.Images[t]);
                     this.tiles.Add(bitmap);
-                    this.tileNames.Add($"{tilename} {t}");
                 }
             }
             else
             {
                 int[] bitmap;
-                (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap($"tilesets{Path.DirectorySeparatorChar}{name}{Path.DirectorySeparatorChar}{tilename}.png");
+                (bitmap, this.tileSize, this.tileSize) = BitmapHelper.LoadBitmap(tile.Images[0]);
                 this.tiles.Add(bitmap);
-                this.tileNames.Add($"{tilename} 0");
-
-                for (int t = 1; t < cardinality; t++)
-                {
-                    if (t <= 3)
-                    {
-                        this.tiles.Add(Rotate(this.tiles[this.T + t - 1], this.tileSize));
-                    }
-
-                    if (t >= 4)
-                    {
-                        this.tiles.Add(Reflect(this.tiles[this.T + t - 4], this.tileSize));
-                    }
-
-                    this.tileNames.Add($"{tilename} {t}");
-                }
-            }
-
-            for (int t = 0; t < cardinality; t++)
-            {
-                weightList.Add(xtile.Get("weight", 1.0));
             }
         }
 
         this.T = action.Count;
-        this.weights = weightList.ToArray();
+        this.weights = config.Weights.ToArray();
 
         this.propagator = new int[4][][];
         var densePropagator = new bool[4][][];
@@ -168,12 +65,14 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
             }
         }
 
-        foreach (XElement xneighbor in xroot.Element("neighbors").Elements("neighbor"))
+        for (var index = 0; index < config.Neighbors.Count; index++)
         {
-            string[] left = xneighbor.Get<string>("left").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] right = xneighbor.Get<string>("right").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var neighbor = config.Neighbors[index];
+            string[] left = neighbor.Left;
+            string[] right = neighbor.Right;
 
-            if (subset != null && (!subset.Contains(left[0]) || !subset.Contains(right[0])))
+            if (config.SubsetNames != null &&
+                (!config.SubsetNames.Contains(left[0]) || !config.SubsetNames.Contains(right[0])))
             {
                 continue;
             }
@@ -322,22 +221,4 @@ public class SimpleTiledModel : WafeFunctionCollapseModel
 
         return result.ToString();
     }
-
-    private static int[] Tile(Func<int, int, int> f, int size)
-    {
-        int[] result = new int[size * size];
-        for (int y = 0; y < size; y++)
-        {
-            for (int x = 0; x < size; x++)
-            {
-                result[x + (y * size)] = f(x, y);
-            }
-        }
-
-        return result;
-    }
-
-    private static int[] Rotate(int[] array, int size) => Tile((x, y) => array[size - 1 - y + (x * size)], size);
-
-    private static int[] Reflect(int[] array, int size) => Tile((x, y) => array[size - 1 - x + (y * size)], size);
 }

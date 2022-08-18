@@ -31,7 +31,8 @@
             this.InputImagesPanel = new System.Windows.Forms.Panel();
             this.ImageMenu = new System.Windows.Forms.MenuStrip();
             this.openFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openImagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenOverlappingImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenTiledSettingFile = new System.Windows.Forms.ToolStripMenuItem();
             this.OutputPanel = new System.Windows.Forms.Panel();
             this.OutputPicture = new System.Windows.Forms.PictureBox();
             this.GenerateButton = new System.Windows.Forms.Button();
@@ -39,17 +40,15 @@
             this.InputLabel = new System.Windows.Forms.Label();
             this.OutputLabel = new System.Windows.Forms.Label();
             this.Options = new System.Windows.Forms.GroupBox();
+            this.NComboBox = new System.Windows.Forms.ComboBox();
+            this.NLabel = new System.Windows.Forms.Label();
             this.HeuristicLabel = new System.Windows.Forms.Label();
             this.HeuristicComboBox = new System.Windows.Forms.ComboBox();
             this.SizeLabel = new System.Windows.Forms.Label();
             this.SizeTrackBar = new System.Windows.Forms.TrackBar();
             this.PeriodicInput = new System.Windows.Forms.CheckBox();
-            this.Simpletiled = new System.Windows.Forms.RadioButton();
-            this.Overlapping = new System.Windows.Forms.RadioButton();
             this.Ground = new System.Windows.Forms.CheckBox();
             this.Periodic = new System.Windows.Forms.CheckBox();
-            this.NLabel = new System.Windows.Forms.Label();
-            this.NComboBox = new System.Windows.Forms.ComboBox();
             this.ImageMenu.SuspendLayout();
             this.OutputPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OutputPicture)).BeginInit();
@@ -78,17 +77,25 @@
             // openFilesToolStripMenuItem
             // 
             this.openFilesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openImagesMenuItem});
+            this.OpenOverlappingImage,
+            this.OpenTiledSettingFile});
             this.openFilesToolStripMenuItem.Name = "openFilesToolStripMenuItem";
             this.openFilesToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.openFilesToolStripMenuItem.Text = "Images";
             // 
-            // openImagesMenuItem
+            // OpenOverlappingImage
             // 
-            this.openImagesMenuItem.Name = "openImagesMenuItem";
-            this.openImagesMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.openImagesMenuItem.Text = "Open Files";
-            this.openImagesMenuItem.Click += new System.EventHandler(this.OpenImagesMenuItem_Click);
+            this.OpenOverlappingImage.Name = "OpenOverlappingImage";
+            this.OpenOverlappingImage.Size = new System.Drawing.Size(207, 22);
+            this.OpenOverlappingImage.Text = "Open Overlapping Image";
+            this.OpenOverlappingImage.Click += new System.EventHandler(this.OpenOverlappingImage_Click);
+            // 
+            // OpenTiledSettingFile
+            // 
+            this.OpenTiledSettingFile.Name = "OpenTiledSettingFile";
+            this.OpenTiledSettingFile.Size = new System.Drawing.Size(207, 22);
+            this.OpenTiledSettingFile.Text = "Open Tiled Setting File";
+            this.OpenTiledSettingFile.Click += new System.EventHandler(this.OpenTiledSettingFile_Click);
             // 
             // OutputPanel
             // 
@@ -161,8 +168,6 @@
             this.Options.Controls.Add(this.SizeLabel);
             this.Options.Controls.Add(this.SizeTrackBar);
             this.Options.Controls.Add(this.PeriodicInput);
-            this.Options.Controls.Add(this.Simpletiled);
-            this.Options.Controls.Add(this.Overlapping);
             this.Options.Controls.Add(this.Ground);
             this.Options.Controls.Add(this.Periodic);
             this.Options.Location = new System.Drawing.Point(13, 378);
@@ -171,6 +176,28 @@
             this.Options.TabIndex = 8;
             this.Options.TabStop = false;
             this.Options.Text = "Options";
+            // 
+            // NComboBox
+            // 
+            this.NComboBox.FormattingEnabled = true;
+            this.NComboBox.Items.AddRange(new object[] {
+            "2",
+            "3"});
+            this.NComboBox.Location = new System.Drawing.Point(85, 212);
+            this.NComboBox.Name = "NComboBox";
+            this.NComboBox.Size = new System.Drawing.Size(121, 23);
+            this.NComboBox.TabIndex = 10;
+            this.NComboBox.SelectedIndexChanged += new System.EventHandler(this.NComboBox_SelectedIndexChanged);
+            // 
+            // NLabel
+            // 
+            this.NLabel.AutoSize = true;
+            this.NLabel.ForeColor = System.Drawing.SystemColors.MenuText;
+            this.NLabel.Location = new System.Drawing.Point(54, 220);
+            this.NLabel.Name = "NLabel";
+            this.NLabel.Size = new System.Drawing.Size(19, 15);
+            this.NLabel.TabIndex = 9;
+            this.NLabel.Text = "N:";
             // 
             // HeuristicLabel
             // 
@@ -209,7 +236,7 @@
             // 
             this.SizeTrackBar.Location = new System.Drawing.Point(16, 123);
             this.SizeTrackBar.Maximum = 500;
-            this.SizeTrackBar.Minimum = 24;
+            this.SizeTrackBar.Minimum = 20;
             this.SizeTrackBar.Name = "SizeTrackBar";
             this.SizeTrackBar.Size = new System.Drawing.Size(290, 45);
             this.SizeTrackBar.TabIndex = 5;
@@ -227,33 +254,6 @@
             this.PeriodicInput.Text = "periodic input";
             this.PeriodicInput.UseVisualStyleBackColor = true;
             this.PeriodicInput.CheckedChanged += new System.EventHandler(this.PeriodicInput_CheckedChanged);
-            // 
-            // Simpletiled
-            // 
-            this.Simpletiled.AutoSize = true;
-            this.Simpletiled.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.Simpletiled.Location = new System.Drawing.Point(251, 34);
-            this.Simpletiled.Name = "Simpletiled";
-            this.Simpletiled.Size = new System.Drawing.Size(83, 19);
-            this.Simpletiled.TabIndex = 3;
-            this.Simpletiled.TabStop = true;
-            this.Simpletiled.Text = "simpletiled";
-            this.Simpletiled.UseVisualStyleBackColor = true;
-            this.Simpletiled.CheckedChanged += new System.EventHandler(this.Simpletiled_CheckedChanged);
-            // 
-            // Overlapping
-            // 
-            this.Overlapping.AutoSize = true;
-            this.Overlapping.Checked = true;
-            this.Overlapping.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.Overlapping.Location = new System.Drawing.Point(157, 34);
-            this.Overlapping.Name = "Overlapping";
-            this.Overlapping.Size = new System.Drawing.Size(88, 19);
-            this.Overlapping.TabIndex = 2;
-            this.Overlapping.TabStop = true;
-            this.Overlapping.Text = "overlapping";
-            this.Overlapping.UseVisualStyleBackColor = true;
-            this.Overlapping.CheckedChanged += new System.EventHandler(this.Overlapping_CheckedChanged);
             // 
             // Ground
             // 
@@ -280,28 +280,6 @@
             this.Periodic.Text = "periodic";
             this.Periodic.UseVisualStyleBackColor = true;
             this.Periodic.CheckedChanged += new System.EventHandler(this.Periodic_CheckedChanged);
-            // 
-            // NLabel
-            // 
-            this.NLabel.AutoSize = true;
-            this.NLabel.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.NLabel.Location = new System.Drawing.Point(54, 220);
-            this.NLabel.Name = "NLabel";
-            this.NLabel.Size = new System.Drawing.Size(19, 15);
-            this.NLabel.TabIndex = 9;
-            this.NLabel.Text = "N:";
-            // 
-            // NComboBox
-            // 
-            this.NComboBox.FormattingEnabled = true;
-            this.NComboBox.Items.AddRange(new object[] {
-            "2",
-            "3"});
-            this.NComboBox.Location = new System.Drawing.Point(85, 212);
-            this.NComboBox.Name = "NComboBox";
-            this.NComboBox.Size = new System.Drawing.Size(121, 23);
-            this.NComboBox.TabIndex = 10;
-            this.NComboBox.SelectedIndexChanged += new System.EventHandler(this.NComboBox_SelectedIndexChanged);
             // 
             // InteractiveTestUI
             // 
@@ -341,7 +319,7 @@
         private Panel InputImagesPanel;
         private MenuStrip ImageMenu;
         private ToolStripMenuItem openFilesToolStripMenuItem;
-        private ToolStripMenuItem openImagesMenuItem;
+        private ToolStripMenuItem OpenOverlappingImage;
         private Panel OutputPanel;
         private Button GenerateButton;
         private PictureBox OutputPicture;
@@ -351,8 +329,6 @@
         private GroupBox Options;
         private CheckBox Periodic;
         private CheckBox Ground;
-        private RadioButton Overlapping;
-        private RadioButton Simpletiled;
         private CheckBox PeriodicInput;
         private Label SizeLabel;
         private TrackBar SizeTrackBar;
@@ -360,5 +336,6 @@
         private Label HeuristicLabel;
         private ComboBox NComboBox;
         private Label NLabel;
+        private ToolStripMenuItem OpenTiledSettingFile;
     }
 }
