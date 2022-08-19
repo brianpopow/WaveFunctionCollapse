@@ -39,9 +39,9 @@
 
         public int[] PixelData { get; }
 
-        private int Width;
+        public int Width { get; }
 
-        private int Height;
+        private int Height { get; }
 
         private static int[] Tile(Func<int, int, int> f, int size)
         {

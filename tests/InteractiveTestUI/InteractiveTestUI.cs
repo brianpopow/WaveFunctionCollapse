@@ -82,6 +82,30 @@ namespace InteractiveTestUI
                 this.tileImagesConfigFile = fileDialog.FileNames[0];
                 this.tileImagesConfig = new TiledDataConfig(this.tileImagesConfigFile);
 
+                // Display input images.
+                int x = 20;
+                int y = 20;
+                int maxHeight = -1;
+                foreach (var tileData in this.tileImagesConfig.Tiles)
+                {
+                    foreach (var tileDataImage in tileData.Images)
+                    {
+                        PictureBox box = new PictureBox();
+                        box.Image = Image.FromFile(tileDataImage.FilePath);
+                        box.Location = new Point(x, y);
+                        box.Width = box.Image.Width + 10; 
+                        x += box.Width;
+                        maxHeight = Math.Max(maxHeight, box.Height);
+                        if (x > 350)
+                        {
+                            x = 20;
+                            y += maxHeight + 10;
+                        }
+
+                        this.InputImagesPanel.Controls.Add(box);
+                    }
+                }
+
                 if (this.tileImagesConfig.SubSets != null)
                 {
                     this.SubsetsComboBox.Enabled = true;

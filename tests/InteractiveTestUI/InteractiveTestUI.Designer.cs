@@ -62,6 +62,7 @@
             // 
             this.InputImagesPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.InputImagesPanel.AutoScroll = true;
             this.InputImagesPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.InputImagesPanel.Location = new System.Drawing.Point(12, 78);
             this.InputImagesPanel.Name = "InputImagesPanel";
